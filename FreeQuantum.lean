@@ -1,0 +1,10 @@
+import FreeQuantum.Bipermutative
+import FreeQuantum.Discrete
+import FreeQuantum.FinPerm
+import FreeQuantum.Eucl
+import FreeQuantum.FinLin
+import FreeQuantum.PiK
+import FreeQuantum.Hadamard
+import FreeQuantum.Model
+import FreeQuantum.Free
+import FreeQuantum.QST2
