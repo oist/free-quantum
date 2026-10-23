@@ -79,7 +79,7 @@ theorem model_ω :
   show ofLin (𝛘 (1 : ZMod (2 ^ k)) • LinearMap.id : Scalar FinLin) ^ 2 ^ _ = _
   rw [ofLin_scalar_pow]
   congr
-  rw [stdAddChar_one_pow, stdAddChar_two_pow_sub_three hk, eighth_eq]
+  rw [ZMod.stdAddChar_one_pow, ZMod.stdAddChar_two_pow_sub_three hk, eighth_eq]
 
 theorem model_H :
     (model hk).lift.map (H : (𝐈 ◇ 𝐈 : PiK k) ⟶ _) =
@@ -88,7 +88,7 @@ theorem model_H :
   simp only [stdModel_lift_map_smul, stdModel_lift_map_pow, Functor.map_comp, stdModel_lift_map_V,
     stdModel_lift_map_S]
   erw [model_ω hk, ofLin_scalar_pow]
-  rw [stdModel_ζ_def, ofLin_scalar_pow, stdAddChar_one_pow, stdAddChar_two_pow_sub_two (by omega)]
+  rw [stdModel_ζ_def, ofLin_scalar_pow, ZMod.stdAddChar_one_pow, ZMod.stdAddChar_two_pow_sub_two (by omega)]
   rw [FinLin.id_one_addHom_scalar]
 
   dsimp only [stdModel_lift_obj, PiK.addObj_n, PiK.mulUnit_n, Nat.reduceAdd]

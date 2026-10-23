@@ -8,6 +8,7 @@ with the two-qubit Quantum Schur Transform as a case study.
 
 | Module | Content |
 |---|---|
+| `FreeQuantum.Extra.{Nat,Fin,Complex,ZMod}` | Project-independent lemmas on Mathlib types |
 | `FreeQuantum.Bipermutative.Basic` | Strict bipermutative categories (SI Definition S1) |
 | `FreeQuantum.Bipermutative.Functor` | `BipermutativeFunctor`: strict bipermutative functors |
 | `FreeQuantum.Bipermutative.Instances.Discrete` | `Discrete ℕ` instance |

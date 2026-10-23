@@ -18,30 +18,6 @@ Symmetries and `eqToHom` are coordinate permutations `perm`.
 
 noncomputable section
 
-@[simp] theorem _root_.finAddFlip_symm {m n : ℕ} :
-    (finAddFlip : Fin (m + n) ≃ Fin (n + m)).symm = finAddFlip := by
-  ext i; simp [finAddFlip]
-
-@[simp] theorem _root_.finAddFlip_trans_finAddFlip {m n : ℕ} :
-    (finAddFlip : Fin (m + n) ≃ Fin (n + m)).trans finAddFlip = Equiv.refl _ := by
-  ext i; simp [finAddFlip]
-
-/-- Case split on `Fin (m + n + p)`. -/
-@[elab_as_elim] def _root_.Fin.addAddCases {m n p : ℕ} {motive : Fin (m + n + p) → Sort*}
-    (left : ∀ i : Fin m, motive (Fin.castAdd p (Fin.castAdd n i)))
-    (mid : ∀ j : Fin n, motive (Fin.castAdd p (Fin.natAdd m j)))
-    (right : ∀ k : Fin p, motive (Fin.natAdd (m + n) k)) (i : Fin (m + n + p)) :
-    motive i :=
-  Fin.addCases (Fin.addCases (motive := fun ij ↦ motive (Fin.castAdd p ij)) left mid) right i
-
-/-- Case split on `Fin (m + (n + p))`. -/
-@[elab_as_elim] def _root_.Fin.addAddCases' {m n p : ℕ} {motive : Fin (m + (n + p)) → Sort*}
-    (left : ∀ i : Fin m, motive (Fin.castAdd (n + p) i))
-    (mid : ∀ j : Fin n, motive (Fin.natAdd m (Fin.castAdd p j)))
-    (right : ∀ k : Fin p, motive (Fin.natAdd m (Fin.natAdd n k))) (i : Fin (m + (n + p))) :
-    motive i :=
-  Fin.addCases left (Fin.addCases (motive := fun jk ↦ motive (Fin.natAdd m jk)) mid right) i
-
 namespace Eucl
 
 variable {m n p : ℕ}
@@ -167,24 +143,6 @@ theorem eq_sum_onb (x : Eucl n) : x = ∑ k, x k • Eucl.onb k := by
   congr
 
 end Eucl
-
-section finProdFinEquiv_helpers
-
-variable {m n : ℕ} (i : Fin m) (j : Fin n)
-
-theorem _root_.Fin.divNat_finProdFinEquiv :
-    Fin.divNat (finProdFinEquiv ⟨i, j⟩) = i := by
-  ext
-  simp [finProdFinEquiv]
-  exact Nat.add_mul_div_of_lt _ j.isLt
-
-theorem _root_.Fin.modNat_finProdFinEquiv :
-    Fin.modNat (finProdFinEquiv ⟨i, j⟩) = j := by
-  ext
-  simp [finProdFinEquiv]
-  exact Nat.mod_eq_of_lt j.isLt
-
-end finProdFinEquiv_helpers
 
 namespace BiEucl
 
@@ -324,45 +282,6 @@ theorem hom_heq_iff' {X X' Y Y' : FinLin} (hX : X = X') (hY : Y = Y')
     simpa using h x
 
 open BipermutativeCategory
-
-section Fin_helpers
-variable {m n p : ℕ} (i : Fin (m * n * p)) (j : Fin (m * (n * p)))
-
-@[simp] theorem _root_.Fin.divNat_cast :
-    Fin.divNat (.cast (mul_assoc ..) i) = .divNat (.divNat i) := by
-  ext; simp [Nat.div_div_eq_div_mul, mul_comm]
-
-@[simp] theorem _root_.Fin.divNat_modNat_cast :
-    Fin.divNat (.modNat (.cast (mul_assoc m n p) i)) = .modNat (.divNat i) := by
-  ext; simp [Nat.mod_mul_left_div_self]
-
-@[simp] theorem _root_.Fin.modNat_modNat_cast :
-    Fin.modNat (.modNat (.cast (mul_assoc m n p) i)) = .modNat i := by
-  ext; simp
-
-@[simp] theorem _root_.Fin.divNat_divNat_cast :
-    Fin.divNat (.divNat (.cast (mul_assoc m n p).symm j)) = .divNat j := by
-  simp [← Fin.divNat_cast]
-
-@[simp] theorem _root_.Fin.modNat_divNat_cast :
-    Fin.modNat (.divNat (.cast (mul_assoc m n p).symm j)) = .divNat (.modNat j) := by
-  simp [← Fin.divNat_modNat_cast]
-
-@[simp] theorem _root_.Fin.modNat_cast :
-    Fin.modNat (.cast (mul_assoc m n p).symm j) = .modNat (.modNat j) := by
-  simp [← Fin.modNat_modNat_cast]
-
-end Fin_helpers
-
-theorem _root_.Nat.mod_mul' (m n p : ℕ) : m % (n * p) = m % p + p * (m % (n * p) / p) := by
-  rw [Nat.mul_div_self_eq_mod_sub_self, Nat.mod_mul_left_mod, Nat.add_sub_of_le]
-  rw [mul_comm, Nat.mod_mul]
-  omega
-
-theorem _root_.Nat.pos_and_pos_of_mul_pos {m n : ℕ} (h : 0 < m * n) : 0 < m ∧ 0 < n := by
-  rcases pos_and_pos_or_neg_and_neg_of_mul_pos h with h | h
-  . exact h
-  . omega
 
 instance instMul : StrictMulSymmetricMonoidalCategory FinLin where
   mulObj X Y := ⟨X.n * Y.n⟩

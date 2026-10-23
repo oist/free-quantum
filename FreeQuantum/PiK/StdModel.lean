@@ -1,9 +1,7 @@
 import FreeQuantum.Bipermutative.Instances.FinLin
 import FreeQuantum.PiK.Model
-import Mathlib.Analysis.SpecialFunctions.Complex.CircleAddChar
+import FreeQuantum.Extra.ZMod
 import Mathlib.Tactic
-
-scoped [FourierTransform] notation "𝛘" => ZMod.stdAddChar
 
 namespace FreeQuantum
 
@@ -29,36 +27,6 @@ open Complex (I)
 open FinLin
 
 attribute [local grind =] Complex.I_sq
-
-theorem stdAddChar_one_pow (N j : ℕ) [NeZero N] : 𝛘 (1 : ZMod N) ^ j = 𝛘 (j : ZMod N) := by
-  rw [← AddChar.map_nsmul_eq_pow, nsmul_one]
-
-theorem stdAddChar_two_pow_sub_two {k : ℕ} (hk : 2 ≤ k) :
-    𝛘 ((2 ^ (k - 2) : ℕ) : ZMod (2 ^ k)) = I := by
-  rw [show ((2 ^ (k - 2) : ℕ) : ZMod (2 ^ k)) = ((2 ^ (k - 2) : ℤ) : ZMod (2 ^ k)) by norm_cast,
-    ZMod.stdAddChar_coe]
-  obtain ⟨j, rfl⟩ := Nat.exists_eq_add_of_le hk
-  conv_rhs => rw [← Complex.exp_pi_div_two_mul_I]
-  congr 1; push_cast; simp [pow_add]; field_simp
-
-theorem _root_.Complex.exp_pi_div_four_mul_I :
-    Complex.exp (π / 4 * I) = (1 + I) / √2 := by
-  rw [Complex.exp_mul_I]
-  norm_cast
-  rw [Real.cos_pi_div_four, Real.sin_pi_div_four]
-  push_cast; field_simp; norm_cast
-  rw [Real.sq_sqrt (by norm_num)]; norm_cast
-
-theorem stdAddChar_two_pow_sub_three {k : ℕ} (hk : 3 ≤ k) :
-    𝛘 ((2 ^ (k - 3) : ℕ) : ZMod (2 ^ k)) = (1 + I) / √2 := by
-  rw [show ((_ : ℕ) : ZMod (2 ^ k)) = ((2 ^ (k - 3) : ℤ) : ZMod (2 ^ k)) by norm_cast,
-    ZMod.stdAddChar_coe]
-  obtain ⟨j, rfl⟩ := Nat.exists_eq_add_of_le hk
-  conv_rhs => rw [← Complex.exp_pi_div_four_mul_I]
-  rw [add_tsub_cancel_left, pow_add]
-  congr 1; push_cast; field_simp; norm_num
-
-open FinLin
 
 /-- `ω₈ = 𝛘 1 = e^{2πi/8}`, a primitive 8th root of unity. -/
 noncomputable def eighth : ℂ := 𝛘 (1 : ZMod 8)
@@ -88,7 +56,7 @@ theorem eighth_add_eighth_inv : ω₈ + ω₈⁻¹ = √2 := by
 
 @[grind =]
 theorem eighth_sq : ω₈ ^ 2 = I := by
-  rw [eighth, stdAddChar_one_pow,
+  rw [eighth, ZMod.stdAddChar_one_pow,
     show ((_ : ℕ) : ZMod 8) = ((2 : ℤ) : ZMod 8) by norm_cast, ZMod.stdAddChar_coe,
     show 2 * π * I * _ / _ = π / 2 * I by ring, Complex.exp_pi_div_two_mul_I]
 
@@ -108,14 +76,14 @@ noncomputable def stdModel (k : ℕ) (hk : 2 ≤ k) : Model k FinLin where
     simp [Matrix.vecHead, Matrix.vecTail, Eucl.onb_apply]
     fin_cases i <;> fin_cases j <;> simp [h0, h1] <;> grind
   V_S_V := by
-    rw [ofLin_scalar_pow, stdAddChar_one_pow, stdAddChar_two_pow_sub_two hk]
+    rw [ofLin_scalar_pow, ZMod.stdAddChar_one_pow, ZMod.stdAddChar_two_pow_sub_two hk]
     rw [id_one_addHom_scalar]
     simp [ofLin, toLin, toLin_comp]
     ext i j
     simp [Matrix.vecHead, Matrix.vecTail, Eucl.onb_apply]
     fin_cases i <;> fin_cases j <;> simp <;> grind
   ζ_pow_two_k := by
-    rw [ofLin_scalar_pow, stdAddChar_one_pow, ZMod.natCast_self, AddChar.map_zero_eq_one, one_smul]
+    rw [ofLin_scalar_pow, ZMod.stdAddChar_one_pow, ZMod.natCast_self, AddChar.map_zero_eq_one, one_smul]
     rfl
 
 theorem stdModel_ζ_def {k : ℕ} {hk : 2 ≤ k} :
@@ -182,7 +150,7 @@ theorem ζ_ne_one {k : ℕ} (hk : 2 ≤ k) : PiK.ζ k ≠ 1 := by
   replace h := congrArg (fun f ↦ (toLin f (Eucl.onb 0)).ofLp 0) h
   simp [stdModel, ofLin, toLin, Eucl.onb_apply] at h
   replace h := congrArg (· ^ 2 ^ (k - 2)) h
-  rw [stdAddChar_one_pow, stdAddChar_two_pow_sub_two hk, one_pow] at h
+  rw [ZMod.stdAddChar_one_pow, ZMod.stdAddChar_two_pow_sub_two hk, one_pow] at h
   simp [Complex.ext_iff] at h
 
 end FinLin

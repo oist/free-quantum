@@ -1,3 +1,7 @@
+import FreeQuantum.Extra.Nat
+import FreeQuantum.Extra.Fin
+import FreeQuantum.Extra.Complex
+import FreeQuantum.Extra.ZMod
 import FreeQuantum.Bipermutative.Basic
 import FreeQuantum.Bipermutative.Functor
 import FreeQuantum.Bipermutative.Instances.Discrete
