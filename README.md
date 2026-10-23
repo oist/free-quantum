@@ -9,11 +9,11 @@ with the two-qubit Quantum Schur Transform as a case study.
 | Module | Content |
 |---|---|
 | `FreeQuantum.Extra.{Nat,Fin,Complex,ZMod}` | Project-independent lemmas on Mathlib types |
+| `FreeQuantum.Eucl` | `Eucl n = EuclideanSpace ℂ (Fin n)`, `perm`, `sumEquiv`, `prodEquiv` |
 | `FreeQuantum.Bipermutative.Basic` | Strict bipermutative categories (SI Definition S1) |
 | `FreeQuantum.Bipermutative.Functor` | `BipermutativeFunctor`: strict bipermutative functors |
 | `FreeQuantum.Bipermutative.Instances.Discrete` | `Discrete ℕ` instance |
 | `FreeQuantum.Bipermutative.Instances.FinPerm` | `FinPerm`: permutations of `Fin n` |
-| `FreeQuantum.Bipermutative.Instances.Eucl` | `Eucl n = EuclideanSpace ℂ (Fin n)`, `BiEucl` |
 | `FreeQuantum.Bipermutative.Instances.FinLin` | `FinLin`: ℂ-linear maps `Eucl m → Eucl n` |
 | `FreeQuantum.PiK.Basic` | `PiK k`: circuit terms modulo `Rel k` (Theorem 1, SI Proposition S5) |
 | `FreeQuantum.PiK.Model` | Models of `Πk` and soundness (SI Proposition S9) |

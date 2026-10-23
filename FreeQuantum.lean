@@ -2,11 +2,11 @@ import FreeQuantum.Extra.Nat
 import FreeQuantum.Extra.Fin
 import FreeQuantum.Extra.Complex
 import FreeQuantum.Extra.ZMod
+import FreeQuantum.Eucl
 import FreeQuantum.Bipermutative.Basic
 import FreeQuantum.Bipermutative.Functor
 import FreeQuantum.Bipermutative.Instances.Discrete
 import FreeQuantum.Bipermutative.Instances.FinPerm
-import FreeQuantum.Bipermutative.Instances.Eucl
 import FreeQuantum.Bipermutative.Instances.FinLin
 import FreeQuantum.PiK.Basic
 import FreeQuantum.PiK.Model

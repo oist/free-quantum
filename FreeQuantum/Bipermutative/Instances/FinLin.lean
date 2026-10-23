@@ -1,5 +1,5 @@
 import FreeQuantum.Bipermutative.Instances.FinPerm
-import FreeQuantum.Bipermutative.Instances.Eucl
+import FreeQuantum.Eucl
 
 namespace FreeQuantum
 
@@ -10,220 +10,13 @@ open BipermutativeCategory
 ## Instance: `FinLin`
 
 Objects are natural numbers, `m ⟶ n` is `Eucl m →ₗ[ℂ] Eucl n`.
-`◆` is `TensorProduct.map` conjugated by `BiEucl.equiv` (index `finProdFinEquiv`),
+`◆` is `TensorProduct.map` conjugated by `Eucl.prodEquiv` (index `finProdFinEquiv`),
 `◇` is `LinearMap.prodMap` conjugated by `Eucl.sumEquiv` (index `finSumFinEquiv`),
 so index conventions agree with `FinPerm`.
 Symmetries and `eqToHom` are coordinate permutations `perm`.
 -/
 
 noncomputable section
-
-namespace Eucl
-
-variable {m n p : ℕ}
-
-/-- Coordinate permutation along `e`. -/
-def perm (e : Fin m ≃ Fin n) : Eucl m ≃ₗ[ℂ] Eucl n :=
-  (LinearIsometryEquiv.piLpCongrLeft 2 ℂ ℂ e).toLinearEquiv
-
-@[simp] theorem perm_apply_apply (e : Fin m ≃ Fin n) (x : Eucl m) (j : Fin n) :
-    perm e x j = x (e.symm j) := by
-  simp [perm, Equiv.piCongrLeft'_apply]
-
-theorem perm_trans_perm (e₁ : Fin m ≃ Fin n) (e₂ : Fin n ≃ Fin p) :
-    perm e₁ ≪≫ₗ perm e₂ = perm (e₁.trans e₂) := by
-  simp only [perm]
-  rw [← LinearIsometryEquiv.toLinearEquiv_trans]
-  congr; ext; simp
-
-@[simp] theorem perm_perm (e₁ : Fin m ≃ Fin n) (e₂ : Fin n ≃ Fin p) (x : Eucl m) :
-    perm e₂ (perm e₁ x) = perm (e₁.trans e₂) x := by
-  show (perm e₁ ≪≫ₗ perm e₂) x = _
-  rw [perm_trans_perm]
-
-@[simp] theorem perm_onb (e : Fin m ≃ Fin n) (i : Fin m) :
-    perm e (Eucl.onb i) = Eucl.onb (e i) := by
-  ext; simp [perm, Eucl.onb_apply]
-
-@[simp] theorem perm_refl : perm (Equiv.refl (Fin n)) = LinearEquiv.refl ℂ (Eucl n) := by
-  ext; simp
-
-/-- `Eucl m × Eucl n ≃ Eucl (m + n)`, indexed by `finSumFinEquiv`. -/
-def sumEquiv : (Eucl m × Eucl n) ≃ₗ[ℂ] Eucl (m + n) :=
-  (LinearEquiv.prodCongr
-    (EuclideanSpace.equiv (Fin m) ℂ)
-    (EuclideanSpace.equiv (Fin n) ℂ)) ≪≫ₗ
-  (LinearEquiv.sumArrowLequivProdArrow (Fin m) (Fin n) ℂ ℂ).symm ≪≫ₗ
-  LinearEquiv.funCongrLeft ℂ ℂ finSumFinEquiv.symm ≪≫ₗ
-  (EuclideanSpace.equiv (Fin (m + n)) ℂ).toLinearEquiv.symm
-
-@[simp] theorem sumEquiv_castAdd (x : Eucl m × Eucl n) (i : Fin m) :
-    sumEquiv x (Fin.castAdd n i) = x.1 i := by
-  simp [sumEquiv, LinearEquiv.funCongrLeft_apply]
-
-@[simp] theorem sumEquiv_natAdd (x : Eucl m × Eucl n) (j : Fin n) :
-    sumEquiv x (Fin.natAdd m j) = x.2 j := by
-  simp [sumEquiv, LinearEquiv.funCongrLeft_apply]
-
-theorem perm_sumEquiv_sumEquiv (x : Eucl m) (y : Eucl n) (z : Eucl p) :
-    perm (finCongr (add_assoc m n p)) (sumEquiv ⟨sumEquiv ⟨x, y⟩, z⟩) =
-      sumEquiv ⟨x, sumEquiv ⟨y, z⟩⟩ := by
-  ext ijk; cases ijk using Fin.addAddCases' <;> simp
-
-theorem perm_sumEquiv_sumEquiv' (x : Eucl m) (y : Eucl n) (z : Eucl p) :
-    perm (finCongr (add_assoc m n p).symm) (sumEquiv ⟨x, sumEquiv ⟨y, z⟩⟩) =
-      sumEquiv ⟨sumEquiv ⟨x, y⟩, z⟩ := by
-  ext ijk; cases ijk using Fin.addAddCases <;> simp
-
-@[simp] theorem sumEquiv_onb_left (i : Fin m) :
-    sumEquiv ⟨Eucl.onb i, 0⟩ = Eucl.onb (i.castAdd n) := by
-  ext ij
-  simp [Eucl.sumEquiv, Eucl.onb_apply]
-  obtain ⟨_ | j, rfl⟩ := finSumFinEquiv.surjective ij <;> simp
-  . apply Fin.ne_of_val_ne; simp; omega
-
-@[simp] theorem sumEquiv_onb_right (j : Fin n) :
-    sumEquiv ⟨0, Eucl.onb j⟩ = Eucl.onb (j.natAdd m) := by
-  ext ij
-  simp [Eucl.sumEquiv, Eucl.onb_apply]
-  obtain ⟨i | _, rfl⟩ := finSumFinEquiv.surjective ij <;> simp
-  . apply Fin.ne_of_val_ne; simp; omega
-
-@[simp] theorem sumEquiv_symm_onb_castAdd (i : Fin m) :
-    sumEquiv.symm (Eucl.onb (Fin.castAdd n i)) = ⟨Eucl.onb i, 0⟩ := by
-  simp [← sumEquiv_onb_left]
-
-@[simp] theorem sumEquiv_symm_onb_natAdd (j : Fin n) :
-    sumEquiv.symm (Eucl.onb (Fin.natAdd m j)) = ⟨0, Eucl.onb j⟩ := by
-  simp [← sumEquiv_onb_right]
-
-theorem sumEquiv_zero_left (x : Eucl n) :
-    sumEquiv ⟨0, x⟩ = perm (finCongr (zero_add _).symm) x := by
-  ext i
-  set i' : Fin n := ⟨i.val, by omega⟩
-  have : i = i'.natAdd 0 := by ext; simp [i']
-  rw [this, sumEquiv_natAdd]
-  simp
-
-theorem sumEquiv_symm_onb_fin_zero_add (i : Fin (0 + n)) :
-    sumEquiv.symm (Eucl.onb i) = ⟨0, Eucl.onb (i.cast (zero_add _))⟩ := by
-  apply sumEquiv.injective
-  simp only [LinearEquiv.apply_symm_apply, sumEquiv_zero_left]
-  ext j; simp
-
-theorem sumEquiv_zero_right (x : Eucl n) :
-    sumEquiv ⟨x, 0⟩ = perm (finCongr (add_zero _).symm) x := by
-  ext i
-  set i' : Fin n := ⟨i.val, by omega⟩
-  have : i = i'.castAdd 0 := by ext; simp [i']
-  rw [this, sumEquiv_castAdd]
-  simp
-
-theorem sumEquiv_symm_onb_fin_add_zero (i : Fin (n + 0)) :
-    sumEquiv.symm (Eucl.onb i) = ⟨Eucl.onb (i.cast (add_zero _)), 0⟩ := by
-  apply sumEquiv.injective
-  simp only [LinearEquiv.apply_symm_apply, sumEquiv_zero_right]
-  ext j; simp
-
-@[simp] theorem sumEquiv_symm_fst (x : Eucl (m + n)) (i : Fin m) :
-    (sumEquiv.symm x).1 i = x (Fin.castAdd n i) := by
-  obtain ⟨_, rfl⟩ := sumEquiv.surjective x; simp
-
-@[simp] theorem sumEquiv_symm_snd (x : Eucl (m + n)) (j : Fin n) :
-    (sumEquiv.symm x).2 j = x (Fin.natAdd m j) := by
-  obtain ⟨_, rfl⟩ := sumEquiv.surjective x; simp
-
-theorem toEuclideanLin_onb (A : Matrix (Fin n) (Fin m) ℂ) (i : Fin m) :
-    Matrix.toEuclideanLin A (Eucl.onb i) = ∑ k, A k i • Eucl.onb k := by
-  ext k
-  simp [Eucl.onb_apply, Matrix.toLpLin_apply, Pi.single_apply, Finset.sum_apply]
-
-theorem eq_sum_onb (x : Eucl n) : x = ∑ k, x k • Eucl.onb k := by
-  conv_lhs => rw [← Eucl.onb.sum_repr x]
-  congr
-
-end Eucl
-
-namespace BiEucl
-
-variable {m n p : ℕ}
-
-theorem equiv_onb_tmul_onb (i : Fin m) (j : Fin n) :
-    BiEucl.equiv (Eucl.onb i ⊗ₜ Eucl.onb j) =
-      Eucl.onb (finProdFinEquiv ⟨i, j⟩) := by
-  ext ij
-  simp [BiEucl.equiv, Eucl.onb_apply]
-  by_cases h : ij = finProdFinEquiv ⟨i, j⟩
-  . simp [h, Fin.divNat_finProdFinEquiv, Fin.modNat_finProdFinEquiv]
-  . simp [if_neg h]
-    split_ifs with h' <;> simp
-    simp [finProdFinEquiv] at h
-    contrapose! h
-    simp [← h, ← h', Nat.mod_add_div]
-
-theorem equiv_symm_onb_fin_mul (i : Fin (m * n)) :
-    BiEucl.equiv.symm (Eucl.onb i) =
-      Eucl.onb i.divNat ⊗ₜ Eucl.onb i.modNat := by
-  apply BiEucl.equiv.injective
-  simp only [LinearEquiv.apply_symm_apply, equiv_onb_tmul_onb]
-  simp [finProdFinEquiv, Nat.mod_add_div]
-
-theorem equiv_onb_zero_tmul (x : Eucl n) :
-    BiEucl.equiv (Eucl.onb 0 ⊗ₜ x) =
-      Eucl.perm (finCongr (one_mul _).symm) x := by
-  ext i
-  simp [BiEucl.equiv, Eucl.onb_apply]
-  rw [if_pos (by omega)]
-  simp only [PiLp.continuousLinearEquiv_apply]
-  apply congrArg; ext
-  rw [Fin.coe_modNat, Nat.mod_eq_of_lt (by have := i.is_lt; omega)]
-  simp
-
-theorem equiv_symm_onb_fin_one_mul (i : Fin (1 * n)) :
-    BiEucl.equiv.symm (Eucl.onb i) =
-      Eucl.onb 0 ⊗ₜ Eucl.onb (i.cast (one_mul _)) := by
-  apply BiEucl.equiv.injective
-  simp only [LinearEquiv.apply_symm_apply, equiv_onb_zero_tmul]
-  ext j
-  simp [Eucl.onb_apply]
-
-theorem equiv_tmul_onb_zero (x : Eucl n) :
-    BiEucl.equiv (x ⊗ₜ Eucl.onb 0) =
-      Eucl.perm (finCongr (mul_one _).symm) x := by
-  ext i
-  simp [BiEucl.equiv, Eucl.onb_apply]
-  rw [if_pos (by omega)]
-  apply congrArg; ext
-  rw [Fin.coe_divNat]
-  simp
-
-theorem equiv_symm_onb_fin_mul_one (i : Fin (n * 1)) :
-    BiEucl.equiv.symm (Eucl.onb i) =
-      Eucl.onb (i.cast (mul_one _)) ⊗ₜ Eucl.onb 0 := by
-  apply BiEucl.equiv.injective
-  simp only [LinearEquiv.apply_symm_apply, equiv_tmul_onb_zero]
-  ext j
-  simp [Eucl.onb_apply]
-
-@[simp] theorem equiv_tmul_finProdFinEquiv (x : Eucl m) (y : Eucl n) (i : Fin m) (j : Fin n) :
-    BiEucl.equiv (x ⊗ₜ y) (finProdFinEquiv ⟨i, j⟩) = x i * y j :=
-  BiEucl.equiv_tmul_ix x y i j
-
-theorem perm_equiv_sumEquiv_tmul (x : Eucl m) (y : Eucl n) (z : Eucl p) :
-    Eucl.perm (finCongr (add_mul m n p)) (BiEucl.equiv (Eucl.sumEquiv ⟨x, y⟩ ⊗ₜ z)) =
-      Eucl.sumEquiv ⟨BiEucl.equiv (x ⊗ₜ z), BiEucl.equiv (y ⊗ₜ z)⟩ := by
-  ext ijk
-  cases ijk using Fin.addCases with
-  | left ik =>
-    obtain ⟨⟨i, k⟩, rfl⟩ := finProdFinEquiv.surjective ik
-    rw [Eucl.sumEquiv_castAdd, Eucl.perm_apply_apply]
-    simp [← Fin.cast_finProdFinEquiv_castAdd]
-  | right jk =>
-    obtain ⟨⟨j, k⟩, rfl⟩ := finProdFinEquiv.surjective jk
-    rw [Eucl.sumEquiv_natAdd, Eucl.perm_apply_apply]
-    simp [← Fin.cast_finProdFinEquiv_natAdd]
-
-end BiEucl
 
 @[ext]
 structure FinLin where
@@ -287,7 +80,7 @@ instance instMul : StrictMulSymmetricMonoidalCategory FinLin where
   mulObj X Y := ⟨X.n * Y.n⟩
   mulUnit := ⟨1⟩
   mulHom f g := ofLin <|
-    BiEucl.equiv.toLinearMap ∘ₗ TensorProduct.map (toLin f) (toLin g) ∘ₗ BiEucl.equiv.symm.toLinearMap
+    Eucl.prodEquiv.toLinearMap ∘ₗ TensorProduct.map (toLin f) (toLin g) ∘ₗ Eucl.prodEquiv.symm.toLinearMap
 
   mulObj_assoc X Y Z := by simp [mul_assoc]
   one_mulObj X := by simp
@@ -296,29 +89,29 @@ instance instMul : StrictMulSymmetricMonoidalCategory FinLin where
   id_one_mulHom_heq f := by
     rw [hom_heq_iff (by ring_nf) (by ring_nf)]
     simp; intro i
-    rw [BiEucl.equiv_symm_onb_fin_one_mul, TensorProduct.map_tmul]
+    rw [Eucl.prodEquiv_symm_onb_fin_one_mul, TensorProduct.map_tmul]
     simp only [LinearMap.id_coe, id_eq]
-    rw [BiEucl.equiv_onb_zero_tmul, Eucl.perm_perm]
+    rw [Eucl.prodEquiv_onb_zero_tmul, Eucl.perm_perm]
     ext j
     simp [Eucl.onb_apply]
   mulHom_id_one_heq f := by
     rw [hom_heq_iff (by ring_nf) (by ring_nf)]
     simp; intro i
-    rw [BiEucl.equiv_symm_onb_fin_mul_one, TensorProduct.map_tmul]
+    rw [Eucl.prodEquiv_symm_onb_fin_mul_one, TensorProduct.map_tmul]
     simp only [LinearMap.id_coe, id_eq]
-    rw [BiEucl.equiv_tmul_onb_zero, Eucl.perm_perm]
+    rw [Eucl.prodEquiv_tmul_onb_zero, Eucl.perm_perm]
     ext j
     simp [Eucl.onb_apply]
   mulHom_assoc_heq {X₁ Y₁ X₂ Y₂ X₃ Y₃} f g h := by
     rw [hom_heq_iff (by ring_nf) (by ring_nf)]
     simp; intro i
-    simp only [BiEucl.equiv_symm_onb_fin_mul, TensorProduct.map_tmul]
+    simp only [Eucl.prodEquiv_symm_onb_fin_mul, TensorProduct.map_tmul]
     simp only [LinearMap.coe_comp, LinearEquiv.coe_coe, Function.comp_apply]
-    simp only [BiEucl.equiv_symm_onb_fin_mul, TensorProduct.map_tmul]
-    ext; simp [BiEucl.equiv, mul_assoc]
+    simp only [Eucl.prodEquiv_symm_onb_fin_mul, TensorProduct.map_tmul]
+    ext; simp [Eucl.prodEquiv, mul_assoc]
   id_mulHom_id X Y := by simp
   mulHom_comp_mulHom f₁ f₂ g₁ g₂ := by
-    ext; simp [BiEucl.equiv_symm_onb_fin_mul, toLin_comp]
+    ext; simp [Eucl.prodEquiv_symm_onb_fin_mul, toLin_comp]
 
   mulSwap X Y := ofLin <|
     (Eucl.perm (finProdFinEquiv.symm.trans ((Equiv.prodComm _ _).trans finProdFinEquiv))).toLinearMap
@@ -332,12 +125,12 @@ instance instMul : StrictMulSymmetricMonoidalCategory FinLin where
     rw [Nat.add_mul_div_of_lt _ this, Nat.mod_eq_of_lt this, Nat.mod_add_div]
   mulSwap_natural f g := by
     ext _ ij; simp [toLin_comp]
-    simp only [BiEucl.equiv_symm_onb_fin_mul, TensorProduct.map_tmul]
-    simp [BiEucl.equiv, Fin.divNat_finProdFinEquiv, Fin.modNat_finProdFinEquiv]
+    simp only [Eucl.prodEquiv_symm_onb_fin_mul, TensorProduct.map_tmul]
+    simp [Eucl.prodEquiv, Fin.divNat_finProdFinEquiv, Fin.modNat_finProdFinEquiv]
     ring
   mulSwap_hexagon X Y Z := by
     ext i j
-    simp [toLin_comp, toLin_eqToHom, BiEucl.equiv_onb_tmul_onb, BiEucl.equiv_symm_onb_fin_mul]
+    simp [toLin_comp, toLin_eqToHom, Eucl.prodEquiv_onb_tmul_onb, Eucl.prodEquiv_symm_onb_fin_mul]
     simp [Eucl.onb_apply]
     have h₁ : i.val % Z.n < Z.n := by
       apply Nat.mod_lt
@@ -412,17 +205,17 @@ instance instAdd : StrictAddSymmetricMonoidalCategory FinLin where
 @[simp] theorem toLin_mulHom_onb {X₁ Y₁ X₂ Y₂ : FinLin} (f : X₁ ⟶ Y₁) (g : X₂ ⟶ Y₂)
     (ij : Fin (X₁ ◆ X₂).n) :
     toLin (f ◆ₘ g) (Eucl.onb ij) =
-      BiEucl.equiv (
+      Eucl.prodEquiv (
         toLin f (Eucl.onb (finProdFinEquiv.symm ij).1) ⊗ₜ
         toLin g (Eucl.onb (finProdFinEquiv.symm ij).2)) := by
   obtain ⟨⟨i, j⟩, rfl⟩ := finProdFinEquiv.surjective ij
   dsimp [mulHom]
-  rw [BiEucl.equiv_symm_onb_fin_mul]
+  rw [Eucl.prodEquiv_symm_onb_fin_mul]
   simp [finProdFinEquiv]
 
-@[simp] theorem toLin_mulHom_equiv_tmul {X₁ Y₁ X₂ Y₂ : FinLin} (f : X₁ ⟶ Y₁) (g : X₂ ⟶ Y₂)
+@[simp] theorem toLin_mulHom_prodEquiv_tmul {X₁ Y₁ X₂ Y₂ : FinLin} (f : X₁ ⟶ Y₁) (g : X₂ ⟶ Y₂)
     (x : Eucl X₁.n) (y : Eucl X₂.n) :
-    toLin (f ◆ₘ g) (BiEucl.equiv (x ⊗ₜ y)) = BiEucl.equiv (toLin f x ⊗ₜ toLin g y) := by
+    toLin (f ◆ₘ g) (Eucl.prodEquiv (x ⊗ₜ y)) = Eucl.prodEquiv (toLin f x ⊗ₜ toLin g y) := by
   dsimp [mulHom]
   simp
 
@@ -437,11 +230,11 @@ instance instAdd : StrictAddSymmetricMonoidalCategory FinLin where
   apply hom_ext; intro i
   simp only [Scalar.smul_def, toLin_comp, toLin_eqToHom, LinearMap.comp_apply,
     LinearEquiv.coe_coe]
-  rw [← BiEucl.equiv_tmul_onb_zero, toLin_mulHom_equiv_tmul]
+  rw [← Eucl.prodEquiv_tmul_onb_zero, toLin_mulHom_prodEquiv_tmul]
   have : toLin c (Eucl.onb 0) = toLin c (Eucl.onb 0) 0 • Eucl.onb 0 := by
     ext i; fin_cases i; simp [Eucl.onb_apply]
   conv_lhs => rw [this]
-  rw [TensorProduct.tmul_smul, map_smul, BiEucl.equiv_tmul_onb_zero]
+  rw [TensorProduct.tmul_smul, map_smul, Eucl.prodEquiv_tmul_onb_zero]
   simp; congr 1
 
 theorem ofLin_smul {X Y : FinLin} (c : ℂ) (f : Eucl X.n →ₗ[ℂ] Eucl Y.n) :
@@ -473,15 +266,15 @@ instance : BipermutativeCategoryBase FinLin where
   addHom_mulHom_heq f g h := by
     rw [hom_heq_iff' (by ext; simp [add_mul]) (by ext; simp [add_mul])]
     simp; intro x
-    obtain ⟨t, rfl⟩ := BiEucl.equiv.surjective x
+    obtain ⟨t, rfl⟩ := Eucl.prodEquiv.surjective x
     induction t using TensorProduct.induction_on with
     | zero => simp
     | tmul x _ =>
       obtain ⟨⟨x₁, x₂⟩, rfl⟩ := Eucl.sumEquiv.surjective x
-      rw [toLin_mulHom_equiv_tmul, toLin_addHom_sumEquiv]
-      rw [BiEucl.perm_equiv_sumEquiv_tmul, BiEucl.perm_equiv_sumEquiv_tmul]
+      rw [toLin_mulHom_prodEquiv_tmul, toLin_addHom_sumEquiv]
+      rw [Eucl.perm_prodEquiv_sumEquiv_tmul, Eucl.perm_prodEquiv_sumEquiv_tmul]
       rw [toLin_addHom_sumEquiv (f ◆ₘ h) (g ◆ₘ h)]
-      simp only [toLin_mulHom_equiv_tmul]
+      simp only [toLin_mulHom_prodEquiv_tmul]
     | add _ _ h₁ h₂ => simp [h₁, h₂]
 
 section
@@ -490,13 +283,13 @@ open Eucl (sumEquiv)
 variable {X Y Z W : FinLin} (x : Eucl X.n) (y : Eucl Y.n) (z : Eucl Z.n) (w : Eucl W.n)
 
 @[simp] theorem toLin_eqToHom_addObj_mulObj :
-    toLin (eqToHom (addObj_mulObj X Y Z)) (BiEucl.equiv (sumEquiv ⟨x, y⟩ ⊗ₜ z)) =
-      sumEquiv ⟨BiEucl.equiv (x ⊗ₜ z), BiEucl.equiv (y ⊗ₜ z)⟩ := by
+    toLin (eqToHom (addObj_mulObj X Y Z)) (Eucl.prodEquiv (sumEquiv ⟨x, y⟩ ⊗ₜ z)) =
+      sumEquiv ⟨Eucl.prodEquiv (x ⊗ₜ z), Eucl.prodEquiv (y ⊗ₜ z)⟩ := by
   rw [toLin_eqToHom]
-  exact BiEucl.perm_equiv_sumEquiv_tmul x y z
+  exact Eucl.perm_prodEquiv_sumEquiv_tmul x y z
 
-@[simp] theorem toLin_mulSwap_equiv_tmul :
-    toLin (σ_◆ X Y) (BiEucl.equiv (x ⊗ₜ y)) = BiEucl.equiv (y ⊗ₜ x) := by
+@[simp] theorem toLin_mulSwap_prodEquiv_tmul :
+    toLin (σ_◆ X Y) (Eucl.prodEquiv (x ⊗ₜ y)) = Eucl.prodEquiv (y ⊗ₜ x) := by
   ext ji
   obtain ⟨⟨j, i⟩, rfl⟩ := finProdFinEquiv.surjective ji
   simp [mulSwap, mul_comm]
@@ -511,11 +304,11 @@ variable {X Y Z W : FinLin} (x : Eucl X.n) (y : Eucl Y.n) (z : Eucl Z.n) (w : Eu
   cases ji using Fin.addCases <;> simp [addSwap]
 
 theorem toLin_distrib :
-    toLin (δ_ X Y Z) (BiEucl.equiv (x ⊗ₜ sumEquiv ⟨y, z⟩)) =
-      sumEquiv ⟨BiEucl.equiv (x ⊗ₜ y), BiEucl.equiv (x ⊗ₜ z)⟩ := by
+    toLin (δ_ X Y Z) (Eucl.prodEquiv (x ⊗ₜ sumEquiv ⟨y, z⟩)) =
+      sumEquiv ⟨Eucl.prodEquiv (x ⊗ₜ y), Eucl.prodEquiv (x ⊗ₜ z)⟩ := by
   simp [distrib, toLin_comp]
-  rw [toLin_mulSwap_equiv_tmul, toLin_eqToHom_addObj_mulObj, toLin_addHom_sumEquiv]
-  rw [toLin_mulSwap_equiv_tmul, toLin_mulSwap_equiv_tmul]
+  rw [toLin_mulSwap_prodEquiv_tmul, toLin_eqToHom_addObj_mulObj, toLin_addHom_sumEquiv]
+  rw [toLin_mulSwap_prodEquiv_tmul, toLin_mulSwap_prodEquiv_tmul]
 
 theorem toLin_addMedial :
     toLin (addMedial X Y Z W) (sumEquiv ⟨sumEquiv ⟨x, y⟩, sumEquiv ⟨z, w⟩⟩) =
@@ -530,19 +323,19 @@ end
 instance : BipermutativeCategory FinLin where
   distrib_square X Y Z := by
     apply LinearMap.ext; intro x
-    obtain ⟨t, rfl⟩ := BiEucl.equiv.surjective x
+    obtain ⟨t, rfl⟩ := Eucl.prodEquiv.surjective x
     induction t using TensorProduct.induction_on with
     | zero => simp
     | tmul xy z =>
       obtain ⟨⟨x, y⟩, rfl⟩ := Eucl.sumEquiv.surjective xy
       simp only [toLin_comp, LinearMap.comp_apply]
       rw [toLin_eqToHom_addObj_mulObj, toLin_addSwap_sumEquiv]
-      rw [toLin_mulHom_equiv_tmul, toLin_addSwap_sumEquiv, toLin_eqToHom_addObj_mulObj]
+      rw [toLin_mulHom_prodEquiv_tmul, toLin_addSwap_sumEquiv, toLin_eqToHom_addObj_mulObj]
       simp
     | add _ _ h₁ h₂ => simp only [map_add]; rw [h₁, h₂]
   distrib_pentagon X Y Z W := by
     apply LinearMap.ext; intro x
-    obtain ⟨t, rfl⟩ := BiEucl.equiv.surjective x
+    obtain ⟨t, rfl⟩ := Eucl.prodEquiv.surjective x
     induction t using TensorProduct.induction_on with
     | zero => simp
     | tmul xy zw =>
@@ -582,10 +375,6 @@ theorem toLin_addHom_onb {X₁ Y₁ X₂ Y₂ : FinLin} (f : X₁ ⟶ Y₁) (g :
       else sumEquiv ⟨0, toLin g (onb ⟨i - X₁.n, by have : i.val < X₁.n + X₂.n := i.isLt; omega⟩)⟩ := by
   rw [onb_addObj_eq_ite]
   split_ifs <;> rw [toLin_addHom_sumEquiv] <;> simp
-
-theorem sumEquiv_apply_eq_ite {m n : ℕ} (x : Eucl m × Eucl n) (i : Fin (m + n)) :
-    sumEquiv x i = if h : i.val < m then x.1 ⟨i, h⟩ else x.2 ⟨i - m, by omega⟩ := by
-  cases i using Fin.addCases <;> simp
 
 /-- The `(i, j)` entry of a hom: the `i`-th coordinate of the image of `onb j`. -/
 def entry {X Y : FinLin} (f : X ⟶ Y) (i : Fin Y.n) (j : Fin X.n) : ℂ :=
