@@ -1,4 +1,4 @@
-import FreeQuantum.Bipermutative
+import FreeQuantum.Bipermutative.Basic
 import Mathlib.Logic.Equiv.Fin.Basic
 import Mathlib.Tactic
 

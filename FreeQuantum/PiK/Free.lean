@@ -1,4 +1,5 @@
-import FreeQuantum.Model
+import FreeQuantum.Bipermutative.Functor
+import FreeQuantum.PiK.Model
 import Mathlib.Tactic
 
 namespace FreeQuantum
@@ -11,7 +12,6 @@ open BipermutativeCategory
 
 Carette et al. (2026), main text Theorem 1.
 
-- `BipermutativeFunctor C D`: a functor strictly preserving the bipermutative structure.
 - `liftBip M`: `Model.lift M` as a bipermutative functor.
 - `BipermutativeFunctor.toModel F`: the model of `F : PiK k ⥤ C`, given by `F` on `ζ` and `V`.
 - `toModel_liftBip`: `(liftBip M).toModel = M`.
@@ -19,27 +19,6 @@ Carette et al. (2026), main text Theorem 1.
 - `lift_unique`: a bipermutative functor out of `PiK k` is determined by its model.
 - `BipermutativeFunctor.modelEquiv`: `Model k C ≃ BipermutativeFunctor (PiK k) C`, i.e. `Πk` is free.
 -/
-
-/-- A functor that strictly preserves the bipermutative structure:
-- `𝐈`, `𝐎`, `◆`, `◇` on objects, as equations;
-- `◆ₘ`, `◇ₘ`, `σ_◆`, `σ_◇` on morphisms, up to the `eqToHom`s induced by the object equations.
-
-`δ_` is defined from `σ_◆` and `◇ₘ`, so it needs no separate condition. -/
-structure BipermutativeFunctor (C D : Type*)
-    [Category C] [BipermutativeCategory C] [Category D] [BipermutativeCategory D]
-    extends C ⥤ D where
-  obj_one : obj 𝐈 = 𝐈
-  obj_zero : obj 𝐎 = 𝐎
-  obj_mulObj (X Y : C) : obj (X ◆ Y) = obj X ◆ obj Y
-  obj_addObj (X Y : C) : obj (X ◇ Y) = obj X ◇ obj Y
-  map_mulHom {X₁ Y₁ X₂ Y₂ : C} (f : X₁ ⟶ Y₁) (g : X₂ ⟶ Y₂) :
-    map (f ◆ₘ g) = eqToHom (obj_mulObj X₁ X₂) ≫ map f ◆ₘ map g ≫ eqToHom (obj_mulObj Y₁ Y₂).symm
-  map_addHom {X₁ Y₁ X₂ Y₂ : C} (f : X₁ ⟶ Y₁) (g : X₂ ⟶ Y₂) :
-    map (f ◇ₘ g) = eqToHom (obj_addObj X₁ X₂) ≫ map f ◇ₘ map g ≫ eqToHom (obj_addObj Y₁ Y₂).symm
-  map_mulSwap (X Y : C) :
-    map (σ_◆ X Y) = eqToHom (obj_mulObj X Y) ≫ σ_◆ (obj X) (obj Y) ≫ eqToHom (obj_mulObj Y X).symm
-  map_addSwap (X Y : C) :
-    map (σ_◇ X Y) = eqToHom (obj_addObj X Y) ≫ σ_◇ (obj X) (obj Y) ≫ eqToHom (obj_addObj Y X).symm
 
 variable {k : ℕ} {C : Type*} [Category C] [BipermutativeCategory C]
 

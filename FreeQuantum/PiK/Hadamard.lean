@@ -1,4 +1,4 @@
-import FreeQuantum.PiK
+import FreeQuantum.PiK.Basic
 import Mathlib.Tactic
 
 namespace FreeQuantum

@@ -1,4 +1,4 @@
-import FreeQuantum.Bipermutative
+import FreeQuantum.Bipermutative.Basic
 
 namespace FreeQuantum
 

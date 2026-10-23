@@ -1,4 +1,4 @@
-import FreeQuantum.Bipermutative
+import FreeQuantum.Bipermutative.Basic
 import Mathlib.Tactic
 
 namespace FreeQuantum

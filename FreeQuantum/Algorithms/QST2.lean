@@ -1,5 +1,5 @@
-import FreeQuantum.Hadamard
-import FreeQuantum.Model
+import FreeQuantum.PiK.Hadamard
+import FreeQuantum.PiK.StdModel
 import Mathlib.Tactic
 
 namespace FreeQuantum

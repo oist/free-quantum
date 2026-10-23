@@ -1,5 +1,5 @@
-import FreeQuantum.FinPerm
-import FreeQuantum.Eucl
+import FreeQuantum.Bipermutative.Instances.FinPerm
+import FreeQuantum.Bipermutative.Instances.Eucl
 
 namespace FreeQuantum
 

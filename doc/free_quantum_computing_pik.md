@@ -1,8 +1,8 @@
 # Πk as a Quotient of Circuit Terms
 
-How to read `FreeQuantum/PiK.lean`, which builds `PiK k`, the free model of
+How to read `FreeQuantum/PiK/Basic.lean`, which builds `PiK k`, the free model of
 reversible quantum computing Πk ("Free quantum computing", Carette et al., 2026,
-Theorem 1 / SI Proposition S5), and `FreeQuantum/Model.lean`, which interprets
+Theorem 1 / SI Proposition S5), and `FreeQuantum/PiK/Model.lean`, which interprets
 it in any model (SI Proposition S9).
 
 ## The Presentation
@@ -10,7 +10,7 @@ it in any model (SI Proposition S9).
 - Generators: `ζk : 1 → 1` and `V : 1 ⊕ 1 → 1 ⊕ 1`.
 - Derived gates: `X := σ⊕[1,1]` (NOT) and `S := id₁ ⊕ ζk^(2^(k-2))`.
 - Axioms: [1] `V ≫ V = X`, [2] `V ≫ S ≫ V = S ≫ V ≫ S`, [3] `ζk^(2^k) = 1`,
-  on top of the bipermutative category laws (SI Definition S1, `FreeQuantum.Bipermutative`).
+  on top of the bipermutative category laws (SI Definition S1, `FreeQuantum.Bipermutative.Basic`).
 
 Prose below uses the paper's `⊗`/`⊕`; Lean code writes them `◆`/`◇` (`◆ₘ`/`◇ₘ` on
 morphisms, `σ_◆`/`σ_◇` for the swaps), e.g. `X` is `σ_◇ 𝐈 𝐈`.
