@@ -13,4 +13,5 @@ import FreeQuantum.PiK.Model
 import FreeQuantum.PiK.StdModel
 import FreeQuantum.PiK.Free
 import FreeQuantum.PiK.Hadamard
+import FreeQuantum.PiK.FinPermModel
 import FreeQuantum.Algorithms.QST2
