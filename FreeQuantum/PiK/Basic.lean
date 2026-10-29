@@ -160,7 +160,7 @@ variable {k : ℕ}
 instance : Category (PiK k) where
   Hom X Y := Quotient (setoid k X.n Y.n)
   id X := Quotient.mk _ (.id X.n)
-  comp := Quotient.map₂ Term.comp fun _ _ hf _ _ hg => Rel.comp_congr hf hg
+  comp := Quotient.map₂ Term.comp fun _ _ hf _ _ hg ↦ Rel.comp_congr hf hg
   id_comp := by
     rintro _ _ ⟨f⟩; exact Quotient.sound (Rel.id_comp f)
   comp_id := by
@@ -192,7 +192,7 @@ open BipermutativeCategory
 instance instMul : StrictMulSymmetricMonoidalCategory (PiK k) where
   mulObj X Y := ⟨X.n * Y.n⟩
   mulUnit := ⟨1⟩
-  mulHom := Quotient.map₂ Term.mul fun _ _ hf _ _ hg => Rel.mulHom_congr hf hg
+  mulHom := Quotient.map₂ Term.mul fun _ _ hf _ _ hg ↦ Rel.mulHom_congr hf hg
 
   mulObj_assoc X Y Z := PiK.ext (mul_assoc X.n Y.n Z.n)
   one_mulObj X := PiK.ext (one_mul X.n)
@@ -225,7 +225,7 @@ instance instMul : StrictMulSymmetricMonoidalCategory (PiK k) where
 instance instAdd : StrictAddSymmetricMonoidalCategory (PiK k) where
   addObj X Y := ⟨X.n + Y.n⟩
   addUnit := ⟨0⟩
-  addHom := Quotient.map₂ Term.add fun _ _ hf _ _ hg => Rel.addHom_congr hf hg
+  addHom := Quotient.map₂ Term.add fun _ _ hf _ _ hg ↦ Rel.addHom_congr hf hg
 
   addObj_assoc X Y Z := PiK.ext (Nat.add_assoc X.n Y.n Z.n)
   zero_addObj X := PiK.ext (zero_add X.n)

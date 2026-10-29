@@ -46,14 +46,14 @@ abbrev ofEquiv {X Y : FinPerm} (e : Fin X.n ≃ Fin Y.n) : X ⟶ Y := e
 
 @[ext] theorem hom_ext {X Y : FinPerm} {f g : X ⟶ Y}
     (h : ∀ i, (toEquiv f i : ℕ) = toEquiv g i) : f = g :=
-  Equiv.ext fun i => Fin.ext (h i)
+  Equiv.ext fun i ↦ Fin.ext (h i)
 
 /-- Reduce a `≍` between morphisms to pointwise equality of `Fin` values. -/
 theorem hom_heq_iff {X X' Y Y' : FinPerm} (hX : X = X') (hY : Y = Y')
     (f : X ⟶ Y) (g : X' ⟶ Y') :
     f ≍ g ↔ ∀ i, (toEquiv f i : ℕ) = toEquiv g (Fin.cast (congrArg FinPerm.n hX) i) := by
   subst hX hY
-  refine ⟨fun h i => by cases h; rfl, fun h => heq_of_eq (hom_ext h)⟩
+  refine ⟨fun h i ↦ by cases h; rfl, fun h ↦ heq_of_eq (hom_ext h)⟩
 
 open BipermutativeCategory
 
