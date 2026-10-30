@@ -9,7 +9,7 @@ open BipermutativeCategory
 /-!
 ## Soundness of `Πk`
 
-Carette et al. (2026), SI Proposition S9.
+Carette et al. (2026), universal property of SI Proposition S5.
 
 A `Model k C` is a bipermutative category `C` with an object map `natObj : ℕ → C` that is strict
 for `0`, `1`, `+`, `*`, and morphisms `ζ : 𝐈 ⟶ 𝐈`, `V : 𝐈 ◇ 𝐈 ⟶ 𝐈 ◇ 𝐈` satisfying Axioms [1]–[3].

@@ -3,7 +3,7 @@
 How to read `FreeQuantum/PiK/Basic.lean`, which builds `PiK k`, the free model of
 reversible quantum computing Πk ("Free quantum computing", Carette et al., 2026,
 Theorem 1 / SI Proposition S5), and `FreeQuantum/PiK/Model.lean`, which interprets
-it in any model (SI Proposition S9).
+it in any model (universal property of SI Proposition S5).
 
 ## The Presentation
 

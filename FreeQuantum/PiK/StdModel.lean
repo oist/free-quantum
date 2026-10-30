@@ -11,6 +11,8 @@ open BipermutativeCategory
 /-!
 ## The standard model of `Πk` in `FinLin`
 
+Carette et al. (2026), SI Proposition S9.
+
 `stdModel k` is the model in `FinLin` with `ζ ↦ 𝛘 1`, where `𝛘 = ZMod.stdAddChar` on `ZMod (2 ^ k)`,
 and `V ↦ (√2)⁻¹[[ω₈, ω₈⁻¹], [ω₈⁻¹, ω₈]]`, where `ω₈ = 𝛘 1` on `ZMod 8`. It requires `2 ≤ k`.
 The `stdModel_lift_*` lemmas compute `(stdModel k hk).lift` on `◆ₘ`, `◇ₘ`, `σ_◆`, `σ_◇`, `•`, `^`,
