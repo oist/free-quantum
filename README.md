@@ -20,6 +20,8 @@ with the two-qubit Quantum Schur Transform as a case study.
 | `FreeQuantum.PiK.StdModel` | `stdModel` in `FinLin` (SI Proposition S9); non-triviality of `Πk` |
 | `FreeQuantum.PiK.Free` | Freeness: `Model k C ≃ BipermutativeFunctor (PiK k) C` |
 | `FreeQuantum.PiK.Hadamard` | `H ≫ H = 𝟙` |
+| `FreeQuantum.PiK.FinPermModel` | No model of `Πk` in `FinPerm` |
+| `FreeQuantum.PiK.DiscreteNatModel` | `Model k DiscreteNat` is unique (the trivial model) |
 | `FreeQuantum.Algorithms.QST2` | `QST₂ : 2 ◆ 2 ≅ 3 ◇ 1` and its correctness in `FinLin` |
 
 ## Build
