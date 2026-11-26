@@ -28,3 +28,7 @@ with the two-qubit Quantum Schur Transform as a case study.
 lake exe cache get
 lake build FreeQuantum
 ```
+
+## License
+
+Copyright 2026 Okinawa Institute of Science and Technology. Licensed under Apache 2.0; see [LICENSE](LICENSE).
