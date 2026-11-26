@@ -1,0 +1,22 @@
+cff-version: 1.2.0
+message: "If you use this software, please cite it using the metadata from this file."
+type: software
+title: "free-quantum: A strict formalization of Πk in Lean 4"
+abstract: >-
+  A strict formalization in Lean 4 / Mathlib of Πk, the free model of
+  reversible quantum computing from "Free quantum computing" (Carette et al.,
+  PNAS 2026), with the two-qubit Quantum Schur Transform as a case study.
+authors:
+  - family-names: Kawai
+    given-names: Hideaki
+    affiliation: Okinawa Institute of Science and Technology
+repository-code: "https://github.com/oist/free-quantum"
+license: Apache-2.0
+version: 0.1.0
+date-released: 2026-11-26
+keywords:
+  - Lean 4
+  - Mathlib
+  - quantum computing
+  - formal verification
+  - category theory
