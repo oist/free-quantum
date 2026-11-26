@@ -1,5 +1,7 @@
 # free-quantum
 
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.24547865.svg)](https://doi.org/10.5281/zenodo.24547865)
+
 A strict formalization in Lean 4 / Mathlib of Πk, the free model of reversible
 quantum computing from "Free quantum computing" (Carette et al., PNAS 2026),
 with the two-qubit Quantum Schur Transform as a case study.
